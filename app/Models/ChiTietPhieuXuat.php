@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\DB;
 class ChiTietPhieuXuat extends Model
 {
     use HasFactory;
+
+    protected $table = 'invoice_details';
+    protected $primaryKey = 'id_invoice_details';
+    public $timestamps = false;
+
     public function layDanhSachChiTietPhieuXuat()
     {
         $danhSachChiTietPhieuXuat = DB::select('SELECT * FROM invoice_details ORDER BY id_invoice_details DESC');
@@ -24,8 +29,9 @@ class ChiTietPhieuXuat extends Model
         $danhSachChiTietPhieuXuat = DB::select('SELECT * FROM invoice_details WHERE id_products = ?', [$masanpham]);
         return $danhSachChiTietPhieuXuat;
     }
-    public function xoaChiTietPhieuXuat($machitietphieuxuat){
-        return DB::select('DELETE FROM invoice_details WHERE id_invoice_details = ?',[$machitietphieuxuat]);
+    public function xoaChiTietPhieuXuat($machitietphieuxuat)
+    {
+        return DB::select('DELETE FROM invoice_details WHERE id_invoice_details = ?', [$machitietphieuxuat]);
     }
     public function themChiTietPhieuXuat($data)
     {

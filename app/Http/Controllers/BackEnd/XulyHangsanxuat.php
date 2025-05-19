@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\BackEnd;
+
 use App\Http\Controllers\Controller;
 use App\Models\SanPham;
 use App\Models\ThuVienHinh;
@@ -132,6 +133,45 @@ class XulyHangsanxuat extends Controller
                 'loaithongbao',
                 'success'
             );
+        }
+        if ($request->thaoTac == "sửa hãng sản xuất") {
+            $rules = [
+                'maHangSua' => 'required|integer|exists:manufacturer,id_mfg',
+                'tenHang' => 'required|string|max:50|min:1',
+                'loaiHang' => 'required|integer|between:0,1'
+            ];
+            $messages = [
+                'required' => ':attribute bắt buộc nhập',
+                'string' => ':attribute nhập sai',
+                'min' => ':attribute tối thiểu :min ký tự',
+                'max' => ':attribute tối đa :max ký tự',
+                'between' => ':attribute vượt quá số lượng cho phép',
+                'integer' => ':attribute nhập sai',
+                'exists' => ':attribute không tồn tại'
+            ];
+            $attributes = [
+                'maHangSua' => 'Hãng sản xuất',
+                'tenHang' => 'Tên hãng',
+                'loaiHang' => 'Loại hãng'
+            ];
+            $request->validate($rules, $messages, $attributes);
+
+            $tenHang = mb_strtoupper($request->tenHang, 'UTF-8');
+            // Kiểm tra trùng tên và loại (trừ chính nó)
+            $trung = $this->hangSanXuat->timHangSanXuatTheoTen($tenHang);
+            if ($trung && $trung->id_mfg != $request->maHangSua && $trung->cat_mfg == $request->loaiHang) {
+                return back()->with('tieudethongbao', 'Thao tác thất bại')
+                    ->with('thongbao', 'Tên hãng sản xuất đã tồn tại, vui lòng nhập lại!')
+                    ->with('loaithongbao', 'danger');
+            }
+            // Cập nhật
+            $this->hangSanXuat->suaHangSanXuat($request->maHangSua, [
+                'name_mfg' => $tenHang,
+                'cat_mfg' => $request->loaiHang
+            ]);
+            return back()->with('tieudethongbao', 'Thao tác thành công')
+                ->with('thongbao', 'Sửa hãng sản xuất thành công')
+                ->with('loaithongbao', 'success');
         }
         return back()->with(
             'tieudethongbao',

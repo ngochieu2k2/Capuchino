@@ -21,7 +21,7 @@
                             <!-- Begin Setting Area -->
                             <li>
                                 <div class="ht-setting-trigger"><a
-                                        href="{{ auth()->check() ? '#' : route('dangnhap') }}"><i
+                                        href="{{ auth()->check() ? '#' : route('login') }}"><i
                                             class="fa fa-user"></i>&nbsp;{{ auth()->check() ? auth()->user()->name_users : 'Đăng nhập / Đăng ký' }}</a>
                                 </div>
                                 <div class="setting ht-setting pb-0"

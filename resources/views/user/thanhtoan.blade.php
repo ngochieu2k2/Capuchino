@@ -42,7 +42,6 @@
                                                 @enderror
                                             </label>
                                             <input name="email" value="{{ old('email') }}"
-                                                pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                                                 title="(Gồm các ký tự chữ thường hoặc số, có chứa @, có chứa dấu . sau ký tự @, tối đa 150 ký tự)"
                                                 type="email" required>
                                         </p>
@@ -52,8 +51,7 @@
                                                     <span style="color: red;font-size:10px">{{ $message }}</span>
                                                 @enderror
                                             </label>
-                                            <input name="matKhau"
-                                                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,32}"
+                                            <input name="matKhau" 
                                                 title="(Gồm các ký tự chữ thường, in hoa hoặc số, có chứa tối thiểu 1 ký tự thường, 1 ký tự in hoa và 1 ký tự số, từ 8-32 ký tự)"
                                                 type="password" required>
                                         </p>
@@ -78,10 +76,11 @@
                                     <form action="{{ route('xulygiohang') }}" method="post">
                                         <p class="checkout-coupon">
                                             <input id="coupon_code" class="input-text" name="maGiamGia"
-                                                pattern="[A-Za-z0-9]{3,50}" value="{{ old('maGiamGia') }}"
+                                                value="{{ old('maGiamGia') }}"
                                                 title="(Gồm các ký tự là chữ thường, in hoa hoặc số, không dấu và không khoảng cách, tối đa 50 ký tự)"
                                                 placeholder="Mã giảm giá" type="text" required>
-                                            <input class="button ml-1 nutapdung" name="thaoTac" value="áp dụng" type="submit">
+                                            <input class="button ml-1 nutapdung" name="thaoTac" value="áp dụng"
+                                                type="submit">
                                         </p>
                                         @error('maGiamGia')
                                             <div class="row">
@@ -120,7 +119,7 @@
                                             title="(Gồm các ký tự là chữ thường hoặc in hoa, có dấu hoặc không dấu, tối đa 50 ký tự)"
                                             name="hoTen"
                                             value="{{ auth()->check() && auth()->user()->roles != 2 ? auth()->user()->name_users : old('hoTen') }}"
-                                            pattern="[a-zỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđA-ZỲỌÁẦẢẤỜỄÀẠẰỆẾÝỘẬỐŨỨĨÕÚỮỊỖÌỀỂẨỚẶÒÙỒỢÃỤỦÍỸẮẪỰỈỎỪỶỞÓÉỬỴẲẸÈẼỔẴẺỠƠÔƯĂÊÂĐ ]{3,50}"
+                                       
                                             type="text" required
                                             {{ auth()->check() && auth()->user()->roles != 2 ? 'disabled' : '' }}>
                                     </div>
@@ -134,7 +133,7 @@
                                         <input
                                             value="{{ auth()->check() && auth()->user()->roles != 2 ? auth()->user()->phone : old('soDienThoai') }}"
                                             title="(Gồm các ký tự là số, có bắt đầu là số 0, tối đa 9 chữ số - không bao gồm ký tự đầu là 0)"
-                                            name="soDienThoai" pattern="^[0]\d{9}$" type="text" required
+                                            name="soDienThoai"  type="text" required
                                             {{ auth()->check() && auth()->user()->roles != 2 ? 'disabled' : '' }}>
                                     </div>
                                 </div>
@@ -148,7 +147,6 @@
                                             value="{{ auth()->check() && auth()->user()->roles != 2 ? auth()->user()->address : old('diaChi') }}"
                                             title="(Gồm các ký tự là chữ thường, in hoa, số hoặc các ký tự như ,.-/ và tối đa 255 ký tự)"
                                             name="diaChi"
-                                            pattern="[a-zỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđA-ZỲỌÁẦẢẤỜỄÀẠẰỆẾÝỘẬỐŨỨĨÕÚỮỊỖÌỀỂẨỚẶÒÙỒỢÃỤỦÍỸẮẪỰỈỎỪỶỞÓÉỬỴẲẸÈẼỔẴẺỠƠÔƯĂÊÂĐ0-9 -/,.]{3,255}"
                                             type="text" required
                                             {{ auth()->check() && auth()->user()->roles != 2 ? 'disabled' : '' }}>
                                     </div>
@@ -197,7 +195,6 @@
                                             @enderror
                                             <input class="mb-15" name="email" id="email"
                                                 value="{{ old('email') }}" disabled
-                                                pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                                                 title="(Gồm các ký tự chữ thường hoặc số, có chứa @, có chứa dấu . sau ký tự @, tối đa 150 ký tự)"
                                                 type="email">
                                             <label>Mật khẩu <span class="required">*</span></label>
@@ -205,7 +202,6 @@
                                                 <span style="color: red;font-size:10px">{{ $message }}</span>
                                             @enderror
                                             <input class="mb-15" id="matKhau" name="matKhau" disabled
-                                                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,32}"
                                                 title="(Gồm các ký tự chữ thường, in hoa hoặc số, có chứa tối thiểu 1 ký tự thường, 1 ký tự in hoa và 1 ký tự số, từ 8-32 ký tự)"
                                                 type="password" required>
                                             <label>Nhập lại mật khẩu <span class="required">*</span></label>
@@ -213,7 +209,6 @@
                                                 <span style="color: red;font-size:10px">{{ $message }}</span>
                                             @enderror
                                             <input class="mb-15" name="nhapLaiMatKhau" id="nhapLaiMatKhau"
-                                                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,32}" disabled
                                                 title="(Gồm các ký tự chữ thường, in hoa hoặc số, có chứa tối thiểu 1 ký tự thường, 1 ký tự in hoa và 1 ký tự số, từ 8-32 ký tự)"
                                                 type="password">
                                         </div>
@@ -221,19 +216,14 @@
                                 @elseif(auth()->check() && auth()->user()->roles != 2)
                                     <input
                                         title="(Gồm các ký tự là chữ thường hoặc in hoa, có dấu hoặc không dấu, tối đa 50 ký tự)"
-                                        name="hoTen"
-                                        value="{{ auth()->user()->name_users }}"
-                                        pattern="[a-zỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđA-ZỲỌÁẦẢẤỜỄÀẠẰỆẾÝỘẬỐŨỨĨÕÚỮỊỖÌỀỂẨỚẶÒÙỒỢÃỤỦÍỸẮẪỰỈỎỪỶỞÓÉỬỴẲẸÈẼỔẴẺỠƠÔƯĂÊÂĐ ]{3,50}"
+                                        name="hoTen" value="{{ auth()->user()->name_users }}"
                                         type="text" required hidden>
-                                    <input
-                                        value="{{ auth()->user()->phone }}"
+                                    <input value="{{ auth()->user()->phone }}"
                                         title="(Gồm các ký tự là số, có bắt đầu là số 0, tối đa 9 chữ số - không bao gồm ký tự đầu là 0)"
-                                        name="soDienThoai" pattern="^[0]\d{9}$" type="text" required hidden>
-                                    <input
-                                        value="{{ auth()->user()->address }}"
+                                        name="soDienThoai" type="text" required hidden>
+                                    <input value="{{ auth()->user()->address }}"
                                         title="(Gồm các ký tự là chữ thường, in hoa, số hoặc các ký tự như ,.-/ và tối đa 255 ký tự)"
                                         name="diaChi"
-                                        pattern="[a-zỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđA-ZỲỌÁẦẢẤỜỄÀẠẰỆẾÝỘẬỐŨỨĨÕÚỮỊỖÌỀỂẨỚẶÒÙỒỢÃỤỦÍỸẮẪỰỈỎỪỶỞÓÉỬỴẲẸÈẼỔẴẺỠƠÔƯĂÊÂĐ0-9 -/,.]{3,255}"
                                         type="text" required hidden>
                                 @endif
                             </div>
@@ -254,7 +244,6 @@
                                                 title="(Gồm các ký tự là chữ thường hoặc in hoa, có dấu hoặc không dấu, tối đa 50 ký tự)"
                                                 name="hoTenNguoiNhan" id="hoTenNguoiNhan"
                                                 value="{{ old('hoTenNguoiNhan') }}" disabled
-                                                pattern="[a-zỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđA-ZỲỌÁẦẢẤỜỄÀẠẰỆẾÝỘẬỐŨỨĨÕÚỮỊỖÌỀỂẨỚẶÒÙỒỢÃỤỦÍỸẮẪỰỈỎỪỶỞÓÉỬỴẲẸÈẼỔẴẺỠƠÔƯĂÊÂĐ ]{3,50}"
                                                 type="text">
                                         </div>
                                     </div>
@@ -267,7 +256,6 @@
                                             <input
                                                 title="(Gồm các ký tự là số, có bắt đầu là số 0, tối đa 9 chữ số - không bao gồm ký tự đầu là 0)"
                                                 name="soDienThoaiNguoiNhan" id="soDienThoaiNguoiNhan" disabled
-                                                value="{{ old('soDienThoaiNguoiNhan') }}" pattern="^[0]\d{9}$"
                                                 type="text">
                                         </div>
                                     </div>
@@ -281,7 +269,6 @@
                                                 title="(Gồm các ký tự là chữ thường, in hoa, số hoặc các ký tự như ,.-/ và tối đa 255 ký tự)"
                                                 name="diaChiNguoiNhan" id="diaChiNguoiNhan"
                                                 value="{{ old('diaChiNguoiNhan') }}" disabled
-                                                pattern="[a-zỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđA-ZỲỌÁẦẢẤỜỄÀẠẰỆẾÝỘẬỐŨỨĨÕÚỮỊỖÌỀỂẨỚẶÒÙỒỢÃỤỦÍỸẮẪỰỈỎỪỶỞÓÉỬỴẲẸÈẼỔẴẺỠƠÔƯĂÊÂĐ0-9 -/,.]{3,255}"
                                                 type="text">
                                         </div>
                                     </div>
@@ -292,23 +279,22 @@
                                         @error('ghiChu')
                                             <span style="color: red;font-size:10px">{{ $message }}</span>
                                         @enderror
-                                            <textarea name="ghiChu" id="checkout-mess" cols="30" rows="10"
-                                                placeholder="VD: Chỉ nhận hàng trong giờ hành chính,...">{{ old('ghiChu') != null ? old('ghiChu') : ''}}</textarea>
+                                        <textarea name="ghiChu" id="checkout-mess" cols="30" rows="10"
+                                            placeholder="VD: Chỉ nhận hàng trong giờ hành chính,...">{{ old('ghiChu') != null ? old('ghiChu') : '' }}</textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6 col-12">
-                        <div class="your-order">
+                        <div class="">
                             <h3>Đơn hàng</h3>
                             <div class="your-order-table table-responsive">
-                                <table class="table">
-                                    <thead>
+                                <table class="table table-bordered table-hover">
+                                    <thead class="thead-light">
                                         <tr>
-                                            <th class="cart-product-name cantrai pl-50" style="width:55%">sản phẩm
-                                            </th>
-                                            <th class="cart-product-total">thành tiền</th>
+                                            <th class="text-start ps-4" style="width: 55%;">Sản phẩm</th>
+                                            <th class="text-end pe-4">Thành tiền</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -318,93 +304,82 @@
                                         @endphp
                                         @if (!empty(session('gioHang')))
                                             @foreach (session('gioHang') as $ctgh)
-                                                <tr class="cart_item">
-                                                    <td class="cart-product-name cantrai pl-20">
-                                                        [SP{{ $ctgh['id_products'] }}] -
-                                                        {{ $ctgh['name_products'] }}<strong class="product-quantity"> ×
-                                                            {{ $ctgh['soluongmua'] }}</strong>
+                                                <tr>
+                                                    <td class="ps-4">
+                                                        <div>
+                                                            <strong>[SP{{ $ctgh['id_products'] }}]</strong> -
+                                                            {{ $ctgh['name_products'] }}
+                                                            <span class="text-muted">× {{ $ctgh['soluongmua'] }}</span>
+                                                        </div>
+
+                                                        {{-- Quà tặng --}}
                                                         @if (!empty($ctgh['gift']))
-                                                            @php
-                                                                $flag = false;
-                                                            @endphp
-                                                            @foreach ($ctgh['gift'] as $sanPhamTang)
-                                                                @if (!$flag)
-                                                                    <p class="m-0 mt-1"
-                                                                        style="font-size:10px;line-height:15px;color: #333"><i style="color: #007bff"
-                                                                            class="fa fa-gift"></i>
-                                                                        [SP{{ $sanPhamTang->id_products }}] -
-                                                                        {{ $sanPhamTang->name_products }} x
-                                                                        {{ $ctgh['soluongmua'] }}</p>
-                                                                    @php
-                                                                        $flag = true;
-                                                                    @endphp
-                                                                @else
-                                                                    <p class="m-0"
-                                                                        style="font-size:10px;line-height:15px;color: #333"><i style="color: #007bff"
-                                                                            class="fa fa-gift"></i>
-                                                                        [SP{{ $sanPhamTang->id_products }}] -
-                                                                        {{ $sanPhamTang->name_products }} x
-                                                                        {{ $ctgh['soluongmua'] }}</p>
-                                                                @endif
+                                                            @foreach ($ctgh['gift'] as $index => $sanPhamTang)
+                                                                <p class="mb-1 small text-secondary">
+                                                                    <i class="fa fa-gift text-primary"></i>
+                                                                    [SP{{ $sanPhamTang->id_products }}] -
+                                                                    {{ $sanPhamTang->name_products }} ×
+                                                                    {{ $ctgh['soluongmua'] }}
+                                                                </p>
                                                             @endforeach
                                                         @endif
                                                     </td>
-                                                    @if (!empty($ctgh['promotional_price']))
-                                                        @php
-                                                            $thanhTienGioHang = $ctgh['soluongmua'] * $ctgh['promotional_price'];
-                                                            $tongTienGioHang += $thanhTienGioHang;
-                                                        @endphp
-                                                    @else
-                                                        @php
-                                                            $thanhTienGioHang = $ctgh['soluongmua'] * $ctgh['sale_price'];
-                                                            $tongTienGioHang += $thanhTienGioHang;
-                                                        @endphp
-                                                    @endif
-                                                    <td class="cart-product-total canphai pr-20"><span
-                                                            class="amount tensanpham">{{ number_format($thanhTienGioHang, 0, ',') }}đ</span>
+                                                    @php
+                                                        $gia = $ctgh['promotional_price'] ?? $ctgh['sale_price'];
+                                                        $thanhTienGioHang = $ctgh['soluongmua'] * $gia;
+                                                        $tongTienGioHang += $thanhTienGioHang;
+                                                    @endphp
+                                                    <td class="text-end pe-4">
+                                                        <span class="fw-bold text-dark">
+                                                            {{ number_format($thanhTienGioHang, 0, ',') }}đ
+                                                        </span>
                                                     </td>
                                                 </tr>
                                             @endforeach
                                         @endif
-                                        <input type="number" hidden id="tongTien" name="tongTien"
-                                            value="{{ $tongTienGioHang }}" required>
-                                        @if (!empty(session('maGiamGia')))
-                                            <tr class="cart_item">
-                                                <td class="cart-product-name cantrai pl-20">
-                                                    Tổng cộng:
-                                                </td>
-                                                <td class="cart-product-total canphai pr-20">
-                                                    <span
-                                                        class="amount tensanpham">{{ number_format($tongTienGioHang, 0, ',') }}đ</span>
-                                                </td>
-                                            </tr>
-                                            @php
-                                                $tongTienGioHang -= session('maGiamGia')->reduced_price;
-                                                if($tongTienGioHang<0) $tongTienGioHang = 0;
-                                            @endphp
-                                            <tr class="cart_item">
-                                                <td class="cart-product-name cantrai pl-20">
-                                                    Giảm ({{ session('maGiamGia')->id_discount }}):
-                                                </td>
-                                                <td class="cart-product-total canphai pr-20"><span
-                                                        class="amount tensanpham">-{{ number_format(session('maGiamGia')->reduced_price, 0, ',') }}đ</span>
-                                                </td>
-                                            </tr>
-                                        @endif
-                                    </tbody>
-                                    <tfoot>
-                                        <tr class="order-total">
-                                            <th class="cantrai pl-20">Cần thanh toán:
-                                                @error('tongTien')
-                                                    <span style="color: red;font-size:10px">{{ $message }}</span>
-                                                @enderror
-                                            </th>
-                                            <td class="canphai pr-20"><strong><span
-                                                        class="amount">{{ number_format($tongTienGioHang, 0, ',') }}đ</span></strong>
+                                        <tr>
+                                            <td class="cantrai pl-20">Tổng cộng:</td>
+                                            <td class="canphai pr-20">
+                                                <span id="tongTien"
+                                                    class="amount tensanpham">{{ number_format($tongTienGioHang, 0, ',') }}đ</span>
                                             </td>
                                         </tr>
-                                    </tfoot>
+                                        <tr>
+                                            <td class="cantrai pl-20">Giảm giá:</td>
+                                            <td class="canphai pr-20">
+                                                <span id="giamGia" class="amount tensanpham">
+                                                    -{{ session('coupon') ? number_format(session('coupon')->amount, 0, ',') : '0' }}đ
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="cantrai pl-20">Cần thanh toán:</th>
+                                            <td class="canphai pr-20">
+                                                <strong>
+                                                    <span id="canThanhToan" class="amount">
+                                                        {{ number_format($tongTienGioHang - (session('coupon')->amount ?? 0), 0, ',') }}đ
+                                                    </span>
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                    </tbody>
                                 </table>
+
+
+                                {{-- mã giảm giá --}}
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for="">Nhập mã giảm giá</label>
+                                        <input type="text" id="couponInput" class="form-control">
+                                        <span id="couponMessage" class="text-success small"></span> <!-- ✅ THÔNG BÁO -->
+                                    </div>
+                                    <div class="col-md-8 d-flex justify-content-end align-items-end">
+                                        <button class="btn btn-primary" id="btnApplyCoupon" type="button">Cập
+                                            nhật</button>
+                                    </div>
+                                </div>
+
+
                             </div>
                             <div class="payment-method">
                                 <div class="payment-accordion">
@@ -420,9 +395,10 @@
                                             </div>
                                             <div id="collapseOne" class="collapse show" data-parent="#accordion">
                                                 <div class="card-body">
-                                                    <p>Sau khi ấn ĐẶT HÀNG trong 24h sẽ có nhân viên liên hệ bạn để xác nhận đơn và
+                                                    <p>Sau khi ấn ĐẶT HÀNG trong 24h sẽ có nhân viên liên hệ bạn để xác nhận
+                                                        đơn và
                                                         giao đến tận nơi. Khi nhận được hàng bạn có thể kiểm tra sản phẩm và
-                                                         thanh toán trực tiếp cho nhân viên giao hàng.</p>
+                                                        thanh toán trực tiếp cho nhân viên giao hàng.</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -438,10 +414,13 @@
                                             </div>
                                             <div id="collapseTwo" class="collapse" data-parent="#accordion">
                                                 <div class="card-body">
-                                                    <p>Sau khi ấn ĐẶT HÀNG trong 24h sẽ có nhân viên liên hệ bạn để xác nhận đơn và
+                                                    <p>Sau khi ấn ĐẶT HÀNG trong 24h sẽ có nhân viên liên hệ bạn để xác nhận
+                                                        đơn và
                                                         giao đến tận nơi. Khi nhận được hàng bạn có thể kiểm tra sản phẩm và
-                                                         thanh toán trực tiếp cho nhân viên giao hàng.
-                                                        Bạn có thể chuyển khoản theo sự hướng dẫn của nhân viên liên hệ khi xác nhận đơn hoặc theo sự hướng dẫn của nhân viên giao hàng khi đã nhận được hàng</p>
+                                                        thanh toán trực tiếp cho nhân viên giao hàng.
+                                                        Bạn có thể chuyển khoản theo sự hướng dẫn của nhân viên liên hệ khi
+                                                        xác nhận đơn hoặc theo sự hướng dẫn của nhân viên giao hàng khi đã
+                                                        nhận được hàng</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -457,9 +436,12 @@
                                             </div>
                                             <div id="collapseThree" class="collapse" data-parent="#accordion">
                                                 <div class="card-body">
-                                                    <p>Sau khi ấn ĐẶT HÀNG giao diện sẽ xuất hiện MÃ QR và SỐ TIỀN CẦN THANH TOÁN.
-                                                        Bạn có thể tiến hành quét mã trên App VNPAY và thực hiện thao tác chuyển
-                                                        tiền hoặc điền thông tin theo biểu mẫu đã xuất hiện trực tiếp trên giao diện.
+                                                    <p>Sau khi ấn ĐẶT HÀNG giao diện sẽ xuất hiện MÃ QR và SỐ TIỀN CẦN THANH
+                                                        TOÁN.
+                                                        Bạn có thể tiến hành quét mã trên App VNPAY và thực hiện thao tác
+                                                        chuyển
+                                                        tiền hoặc điền thông tin theo biểu mẫu đã xuất hiện trực tiếp trên
+                                                        giao diện.
                                                         Sau khi thanh toán thành công giao diện sẽ thông báo.
                                                     </p>
                                                 </div>
@@ -474,6 +456,8 @@
                         </div>
                     </div>
                 </div>
+                <input type="hidden" name="tongTien" id="tongTienInput"
+                    value="{{ $tongTienGioHang - (session('coupon')->amount ?? 0) }}">
                 @csrf
             </form>
         </div>
@@ -482,7 +466,67 @@
 @endsection
 @section('js')
     {{-- thêm js --}}
+
     <script>
+        document.getElementById('btnApplyCoupon').addEventListener('click', function() {
+            const coupon = document.getElementById('couponInput').value.trim();
+            const messageEl = document.getElementById('couponMessage');
+            const tongTienEl = document.getElementById('tongTien');
+            const giamGiaEl = document.getElementById('giamGia');
+            const canThanhToanEl = document.getElementById('canThanhToan');
+            const tongTienInput = document.getElementById('tongTienInput');
+
+            // Lấy giá trị chuỗi, không ép kiểu
+            const tongTien = tongTienEl.textContent.replace(/[^0-9]/g, '') || '0';
+
+            fetch('/ap-dung-ma-giam-gia', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content')
+                    },
+                    body: JSON.stringify({
+                        coupon,
+                        order_total: tongTien // truyền chuỗi lên server
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // discount là chuỗi, chỉ ép kiểu khi hiển thị lại
+                        const discount = data.discount || '0';
+                        giamGiaEl.textContent = '-' + Number(discount).toLocaleString('vi-VN') + 'đ';
+                        canThanhToanEl.textContent = (Number(tongTien) - Number(discount)).toLocaleString(
+                            'vi-VN') + 'đ';
+                        tongTienInput.value = Number(tongTien) - Number(discount);
+
+                        messageEl.textContent = data.message;
+                        messageEl.classList.remove('text-danger');
+                        messageEl.classList.add('text-success');
+                    } else {
+                        giamGiaEl.textContent = '-0đ';
+                        canThanhToanEl.textContent = Number(tongTien).toLocaleString('vi-VN') + 'đ';
+                        tongTienInput.value = tongTien;
+
+                        messageEl.textContent = data.message || 'Mã giảm giá không hợp lệ.';
+                        messageEl.classList.remove('text-success');
+                        messageEl.classList.add('text-danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi khi áp dụng mã:', error);
+                    giamGiaEl.textContent = '-0đ';
+                    canThanhToanEl.textContent = Number(tongTien).toLocaleString('vi-VN') + 'đ';
+                    tongTienInput.value = tongTien;
+
+                    messageEl.textContent = 'Có lỗi xảy ra. Vui lòng thử lại sau.';
+                    messageEl.classList.remove('text-success');
+                    messageEl.classList.add('text-danger');
+                });
+        });
+
+
         $('#ship-box').change(function() {
             var thongTinNguoiNhanKhac = document.getElementById('ship-box');
             var hoTenNguoiNhan = document.getElementById('hoTenNguoiNhan');

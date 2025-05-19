@@ -11,7 +11,7 @@
             <div class="breadcrumb-content">
                 <ul>
                     <li><a href="{{ route('/') }}">Trang chủ</a></li>
-                    <li class="active"><a href="{{ route('dangnhap') }}">Đăng nhập - Đăng ký</a></li>
+                    <li class="active"><a href="{{ route('login') }}">Đăng nhập - Đăng ký</a></li>
                 </ul>
             </div>
         </div>
@@ -84,8 +84,7 @@
                                         @enderror
                                     </label>
                                     <input class="mb-0" name="emailDangKy" id="emailDangKy"
-                                        value="{{ old('emailDangKy') }}"
-                                        pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                                        value="{{ old('emailDangKy') }}" pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                                         title="(Gồm các ký tự chữ thường hoặc số, có chứa @, có chứa dấu . sau ký tự @, tối đa 150 ký tự)"
                                         type="email" required>
                                 </div>
@@ -178,7 +177,7 @@
             var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (email.value === '') {
                 alert("Email không được để trống!");
-            }else if (!emailPattern.test(email.value)) {
+            } else if (!emailPattern.test(email.value)) {
                 alert("Email không phù hợp!");
             }
         });

@@ -65,7 +65,7 @@
                                             Đối tác</option>
                                     @elseif(old('loaiNguoiDung') == 2)
                                         <option value="{{ old('loaiNguoiDung') }}" selected hidden>
-                                            Nhân viên</option>
+                                            A</option>
                                     @endif
                                     <option value="0" {{ request()->is('themphieuxuat') ? 'selected' : '' }}>Khách hàng</option>
                                     <option value="1" {{ request()->is('themphieunhap') ? 'selected' : '' }}>Đối tác</option>

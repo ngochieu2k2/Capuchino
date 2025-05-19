@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 class NguoiDung extends Model
 {
     use HasFactory;
+
+    protected $table = 'users';
     public function layDanhSachNguoiDung()
     {
         $danhSachNguoiDung = DB::select('SELECT * FROM users ORDER BY id_users DESC');
@@ -80,7 +82,8 @@ class NguoiDung extends Model
             roles,
             email,
             password,
-            date_created) values (
+            date_created
+            ) values (
             ?,
             ?,
             ?,

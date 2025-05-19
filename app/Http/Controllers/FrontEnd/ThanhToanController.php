@@ -12,9 +12,11 @@ use App\Models\QuaTang;
 use App\Models\NguoiDung;
 use App\Models\PhieuXuat;
 use App\Models\ChiTietPhieuXuat;
+use App\Models\Coupon;
 use App\Models\MaGiamGia;
 use App\Models\LoiPhanHoi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ThanhToanController extends Controller
 {
@@ -47,7 +49,7 @@ class ThanhToanController extends Controller
     public function thanhtoan(Request $request)
     {
         if (empty(session('gioHang'))) return redirect()->route('giohang');
-        if (isset($request->vnp_ResponseCode) && isset($request->vnp_TransactionStatus)) {// sau khi thanh toan vnpay thanh cong
+        if (isset($request->vnp_ResponseCode) && isset($request->vnp_TransactionStatus)) { // sau khi thanh toan vnpay thanh cong
             if ($request->vnp_ResponseCode == "00" && $request->vnp_TransactionStatus == "00") {
                 $dataPhieuXuat = json_decode($request->vnp_OrderInfo);
                 $dataPhieuXuat[10] += ($request->vnp_Amount / 100); // cong no
@@ -175,9 +177,17 @@ class ThanhToanController extends Controller
                 }
             }
             $ngayTao = date("Y-m-d H:i:s");
-            $thongTinNguoiDung = $this->nguoiDung->timNguoiDungTheoSoDienThoai($request->soDienThoai); //tim nguoi dung da ton tai hay chua
+            if (auth()->check()) {
+                // Nếu đã đăng nhập, luôn lấy user đang đăng nhập
+                $thongTinNguoiDung = auth()->user();
+            } else {
+                // Nếu chưa đăng nhập, mới tìm theo số điện thoại
+                $thongTinNguoiDung = $this->nguoiDung->timNguoiDungTheoSoDienThoai($request->soDienThoai);
+            }
             if (!empty($thongTinNguoiDung)) { //neu tim thay
-                if ($thongTinNguoiDung->status == 0) { //neu nguoi dung dang bi khoa
+                // Nếu là array
+                $status = is_array($thongTinNguoiDung) ? $thongTinNguoiDung['status'] : $thongTinNguoiDung->status;
+                if ($status == 0) { //neu nguoi dung dang bi khoa
                     return back()->with('thongbao', 'Thông tin người đặt hiện đang bị tạm khóa do hủy quá nhiều đơn!');
                 }
                 if (isset($request->taoTaiKhoan)) {
@@ -190,7 +200,7 @@ class ThanhToanController extends Controller
                                 bcrypt($request->matKhau)
                             ];
                             $this->nguoiDung->taoTaiKhoanNguoiDung($dataNguoiDung, $thongTinNguoiDung->id_users); //tao tai khoan cho nguoi dung
-                            $thongTinNguoiDung = $this->nguoiDung->timNguoiDungTheoMa($thongTinNguoiDung->id_users);// cap nhat lai thong tin nguoi dung
+                            $thongTinNguoiDung = $this->nguoiDung->timNguoiDungTheoMa($thongTinNguoiDung->id_users); // cap nhat lai thong tin nguoi dung
                         }
                     }
                 }
@@ -203,7 +213,7 @@ class ThanhToanController extends Controller
                     $thongTinNguoiDung->password
                 ];
                 $this->nguoiDung->suaNguoiDung($dataNguoiDung, $thongTinNguoiDung->id_users); //sua lai thong tin nguoi dung
-                $thongTinNguoiDung = $this->nguoiDung->timNguoiDungTheoMa($thongTinNguoiDung->id_users);// cap nhat lai thong tin nguoi dung
+                $thongTinNguoiDung = $this->nguoiDung->timNguoiDungTheoMa($thongTinNguoiDung->id_users); // cap nhat lai thong tin nguoi dung
             } else {
                 $dataNguoiDung = [
                     NULL, //manguoidung tu tang
@@ -234,7 +244,7 @@ class ThanhToanController extends Controller
                 $this->nguoiDung->themNguoiDung($dataNguoiDung); //them nguoi dung vao database
                 $thongTinNguoiDung = $this->nguoiDung->timNguoiDungTheoNgayTao($ngayTao); //tim nguoi dung vua them
             }
-            $congNo = - $request->tongTien;
+            $congNo = -$request->tongTien;
             $maGiamGiaDuocApDung = NULL;
             if (!empty(session('maGiamGia'))) {
                 $thongTinMaGiamGia = $this->maGiamGia->timMaGiamGiaTheoMa(session('maGiamGia')->id_discount); //tim ma giam gia
@@ -292,7 +302,7 @@ class ThanhToanController extends Controller
                 $vnp_TxnRef = time() . ""; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này sang VNPAY
                 $vnp_OrderInfo = json_encode($dataPhieuXuat) . "";
                 $vnp_OrderType = 'billpayment';
-                $vnp_Amount = (- $congNo) * 100;
+                $vnp_Amount = (-$congNo) * 100;
                 $vnp_Locale = 'vn';
                 $vnp_BankCode = 'NCB';
                 $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
@@ -334,7 +344,7 @@ class ThanhToanController extends Controller
                         $hashdata .= $key . "=" . $value;
                         $i        = 1;
                     }
-                   
+
                     $query .= urlencode($key) . "=" . urlencode($value) . '&';
                 }
                 $vnp_Url = $vnp_Url . "?" . $query;
@@ -343,7 +353,9 @@ class ThanhToanController extends Controller
                     $vnp_Url .= 'vnp_SecureHashType=SHA256&vnp_SecureHash=' . $vnpSecureHash;
                 }
                 $returnData = array(
-                    'code' => '00', 'message' => 'success', 'data' => $vnp_Url
+                    'code' => '00',
+                    'message' => 'success',
+                    'data' => $vnp_Url
                 );
                 if ($request->thaoTac == "đặt hàng") {
                     return redirect()->to($vnp_Url);
@@ -381,9 +393,127 @@ class ThanhToanController extends Controller
                 ];
                 $this->chiTietPhieuXuat->themChiTietPhieuXuat($dataChiTietPhieuXuat); //them chi tiet phieu xuat vao database
             }
+            if (session('coupon')) {
+                $coupon = session('coupon');
+                $user = auth()->user();
+                if ($user && $coupon) {
+                    $pivot = DB::table('coupon_users')
+                        ->where('user_id', $user->id_users)
+                        ->where('coupon_id', $coupon->id)
+                        ->first();
+                    if ($pivot) {
+                        DB::table('coupon_users')
+                            ->where('id', $pivot->id)
+                            ->update(['used_count' => $pivot->used_count + 1, 'updated_at' => now()]);
+                    } else {
+                        DB::table('coupon_users')->insert([
+                            'user_id' => $user->id_users,
+                            'coupon_id' => $coupon->id,
+                            'used_count' => 1,
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ]);
+                    }
+                    // Kiểm tra tổng số lượt sử dụng để tự động hủy kích hoạt mã
+                    $totalUsed = DB::table('coupon_users')
+                        ->where('coupon_id', $coupon->id)
+                        ->sum('used_count');
+                    if ($coupon->usage_limit && $totalUsed >= $coupon->usage_limit) {
+                        \App\Models\Coupon::where('id', $coupon->id)->update(['is_active' => false]);
+                    }
+                }
+                session()->forget('coupon');
+            }
             session()->forget('gioHang');
             return redirect()->route('/')->with('thongbao', 'Đặt hàng thành công, sẽ có nhân viên liên hệ bạn để xác nhận trong 24h tới!');
         }
         return redirect()->route('/')->with('thongbao', 'Thao tác thất bại vui lòng thử lại!');
+    }
+
+    public function applyCoupon(Request $request)
+    {
+        $couponCode = $request->input('coupon');
+        $orderTotal = $request->input('order_total');
+
+        $coupon = \App\Models\Coupon::where('code', $couponCode)->first();
+
+        if (!$coupon) {
+            session()->forget('coupon');
+            return response()->json([
+                'success' => false,
+                'message' => 'Mã giảm giá không hợp lệ.'
+            ], 404);
+        }
+
+        if (!$coupon->is_active) {
+            session()->forget('coupon');
+            return response()->json([
+                'success' => false,
+                'message' => 'Mã giảm giá không còn hoạt động.'
+            ], 403);
+        }
+
+        $now = now();
+        if ($now->lt($coupon->start_date) || $now->gt($coupon->end_date)) {
+            session()->forget('coupon');
+            return response()->json([
+                'success' => false,
+                'message' => 'Mã giảm giá đã hết hạn hoặc chưa đến thời gian sử dụng.'
+            ], 403);
+        }
+
+        if ($orderTotal < $coupon->min_order_amount) {
+            session()->forget('coupon');
+            return response()->json([
+                'success' => false,
+                'message' => 'Đơn hàng chưa đạt giá trị tối thiểu để áp dụng mã giảm giá.'
+            ], 403);
+        }
+
+        if (!auth()->check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Bạn cần đăng nhập để sử dụng mã giảm giá.'
+            ], 403);
+        }
+
+        $user = auth()->user();
+
+        // Kiểm tra số lượt sử dụng của user
+        $pivot = DB::table('coupon_users')
+            ->where('user_id', $user->id_users)
+            ->where('coupon_id', $coupon->id)
+            ->first();
+
+        $userLimit = $coupon->user_limit ?? 1;
+        if ($pivot && $pivot->used_count >= $userLimit) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Bạn đã sử dụng hết số lần cho phép của mã này.'
+            ], 403);
+        }
+
+        // Kiểm tra tổng số lượt sử dụng
+        $totalUsed = DB::table('coupon_users')
+            ->where('coupon_id', $coupon->id)
+            ->sum('used_count');
+        if ($coupon->usage_limit && $totalUsed >= $coupon->usage_limit) {
+            // Tự động hủy kích hoạt mã
+            $coupon->is_active = false;
+            $coupon->save();
+            session()->forget('coupon');
+            return response()->json([
+                'success' => false,
+                'message' => 'Mã giảm giá đã hết lượt sử dụng.'
+            ], 403);
+        }
+
+        // Lưu vào session
+        session(['coupon' => $coupon]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Áp dụng mã giảm giá thành công!',
+            'discount' => $coupon->discount
+        ]);
     }
 }

@@ -11,7 +11,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('xulymagiamgia') }}" method="POST" enctype="multipart/form-data">
+            <form action="" method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
                     <p class="small" style="font-size:14px !important;">Nhập thông tin theo mẫu bên dưới</p>
                     <div class="row">

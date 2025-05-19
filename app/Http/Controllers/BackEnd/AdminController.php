@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\BackEnd;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\SanPham;
@@ -19,6 +20,7 @@ use App\Models\LoiPhanHoi;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use PDF;
+
 class AdminController extends Controller
 {
     //
@@ -57,7 +59,7 @@ class AdminController extends Controller
     public function laptop()
     {
         if (!Auth::check() || Auth::user()->roles != 2) {
-            return redirect()->route('dangnhap');
+            return redirect()->route('login');
         }
         $danhSachSanPham = $this->sanPham->layDanhSachSanPham();
         $danhSachLaptop = $this->laptop->layDanhSachLaptop();
@@ -82,11 +84,11 @@ class AdminController extends Controller
             'danhSachQuaTang'
         ));
     }
-   //xulylaptop
+    //xulylaptop
     public function phukien()
     {
         if (!Auth::check() || Auth::user()->roles != 2) {
-            return redirect()->route('dangnhap');
+            return redirect()->route('login');
         }
         $danhSachSanPham = $this->sanPham->layDanhSachSanPham();
         $danhSachPhuKien = $this->phuKien->layDanhSachPhuKien();
@@ -115,7 +117,7 @@ class AdminController extends Controller
     public function hangsanxuat()
     {
         if (!Auth::check() || Auth::user()->roles != 2) {
-            return redirect()->route('dangnhap');
+            return redirect()->route('login');
         }
         $danhSachSanPham = $this->sanPham->layDanhSachSanPham();
         $danhSachHangSanXuat = $this->hangSanXuat->layDanhSachHangSanXuat();
@@ -132,7 +134,7 @@ class AdminController extends Controller
     public function xemphieuxuat(Request $request)
     {
         if (!Auth::check() || Auth::user()->roles != 2) {
-            return redirect()->route('dangnhap');
+            return redirect()->route('login');
         }
         $rules = [
             'mapx' => 'required|integer|exists:invoice,id_invoice'
@@ -162,7 +164,7 @@ class AdminController extends Controller
     public function suaphieunhap(Request $request)
     {
         if (!Auth::check() || Auth::user()->roles != 2) {
-            return redirect()->route('dangnhap');
+            return redirect()->route('login');
         }
         $rules = [
             'id' => 'required|integer|exists:purchase_order,id_purchase_order'
@@ -215,7 +217,7 @@ class AdminController extends Controller
     public function suaphieuxuat(Request $request)
     {
         if (!Auth::check() || Auth::user()->roles != 2) {
-            return redirect()->route('dangnhap');
+            return redirect()->route('login');
         }
         $rules = [
             'id' => 'required|integer|exists:invoice,id_invoice'
@@ -270,10 +272,10 @@ class AdminController extends Controller
     public function phieuxuat()
     {
         if (!Auth::check() || Auth::user()->roles != 2) {
-            return redirect()->route('dangnhap');
+            return redirect()->route('login');
         }
-        
-        $danhSachPhieuXuat = $this->phieuXuat->layDanhSachPhieuXuat();       
+
+        $danhSachPhieuXuat = $this->phieuXuat->layDanhSachPhieuXuat();
         $danhSachPhieuXuatChoXacNhan = $this->phieuXuat->layDanhSachPhieuXuatTheoBoLoc([['invoice.delivery_status', '=', 1]]);
         $danhSachLoiPhanHoiChuaDoc = $this->loiPhanHoi->layDanhSachLoiPhanHoiTheoBoLoc([['feedback.status', '=', 0]]);
         $danhSachNguoiDung = $this->nguoiDung->layDanhSachNguoiDung();
@@ -289,7 +291,7 @@ class AdminController extends Controller
     public function themphieuxuat(Request $request)
     {
         if (!Auth::check() || Auth::user()->roles != 2) {
-            return redirect()->route('dangnhap');
+            return redirect()->route('login');
         }
         $danhSachSanPham = $this->sanPham->layDanhSachSanPhamChoPhieu();
         $danhSachHangSanXuat = $this->hangSanXuat->layDanhSachHangSanXuat();
@@ -325,7 +327,7 @@ class AdminController extends Controller
     public function phieunhap()
     {
         if (!Auth::check() || Auth::user()->roles != 2) {
-            return redirect()->route('dangnhap');
+            return redirect()->route('login');
         }
         $danhSachPhieuNhap = $this->phieuNhap->layDanhSachPhieuNhap();
         $danhSachNguoiDung = $this->nguoiDung->layDanhSachNguoiDung();
@@ -338,11 +340,11 @@ class AdminController extends Controller
             'danhSachNguoiDung'
         ));
     }
-    
+
     public function themphieunhap()
     {
         if (!Auth::check() || Auth::user()->roles != 2) {
-            return redirect()->route('dangnhap');
+            return redirect()->route('login');
         }
         $danhSachSanPham = $this->sanPham->layDanhSachSanPham();
         $danhSachHangSanXuat = $this->hangSanXuat->layDanhSachHangSanXuat();
@@ -375,11 +377,11 @@ class AdminController extends Controller
             'danhSachNhaCungCap'
         ));
     }
-    
+
     public function magiamgia()
     {
         if (!Auth::check() || Auth::user()->roles != 2) {
-            return redirect()->route('dangnhap');
+            return redirect()->route('login');
         }
         $danhSachMaGiamGia = $this->maGiamGia->layDanhSachMaGiamGia();
         $danhSachPhieuXuat = $this->phieuXuat->layDanhSachPhieuXuat();
@@ -396,12 +398,56 @@ class AdminController extends Controller
     public function nguoidung()
     {
         if (!Auth::check() || Auth::user()->roles != 2) {
-            return redirect()->route('dangnhap');
+            return redirect()->route('login');
         }
-        $danhSachNguoiDung = $this->nguoiDung->layDanhSachNguoiDung();
-        return view('admin.nguoidung', compact(
-            'danhSachNguoiDung'           
-        ));
+        // Lấy admin cấp cao (role = 2) có email
+        $admins = $this->nguoiDung
+            ->where('roles', 2)
+            ->whereNotNull('email')
+            ->where('email', '!=', '')
+            ->get();
+        // Lấy user thường (role = 0) có email
+        $users = $this->nguoiDung
+            ->where('roles', 0)
+            ->whereNotNull('email')
+            ->where('email', '!=', '')
+            ->get();
+        // Gộp lại, admin lên đầu
+        $danhSachNguoiDung = $admins->concat($users);
+        return view('admin.nguoidung', compact('danhSachNguoiDung'));
     }
     //xulynguoidung
+    public function thayDoiTrangThaiNguoiDung(Request $request)
+    {
+        if (!Auth::check() || Auth::user()->roles != 2) {
+            return redirect()->route('login');
+        }
+        $rules = [
+            'maNguoiDungKhoa' => 'required|integer|exists:users,id',
+            'thaoTac' => 'required|string'
+        ];
+        $messages = [
+            'required' => ':attribute bắt buộc nhập',
+            'exists' => ':attribute không tồn tại',
+            'integer' => ':attribute nhập sai'
+        ];
+        $attributes = [
+            'maNguoiDungKhoa' => 'Mã người dùng',
+            'thaoTac' => 'Thao tác'
+        ];
+        $request->validate($rules, $messages, $attributes);
+        if ($request->thaoTac == "đổi trạng thái người dùng") {
+            $thongTinNguoiDung = $this->nguoiDung->timNguoiDungTheoMa($request->maNguoiDungKhoa);
+            if ($thongTinNguoiDung->roles != 0) {
+                return back()->with('thongbao', 'Chỉ được phép khóa user thường!')->with('loaithongbao', 'danger');
+            }
+            $this->nguoiDung->where('id', $request->maNguoiDungKhoa)->update(['status' => 0]);
+            return back()->with('thongbao', 'Đã khóa người dùng thành công')->with('loaithongbao', 'success');
+        }
+        if ($request->thaoTac == "mở trạng thái người dùng") {
+            $this->nguoiDung->where('id', $request->maNguoiDungKhoa)->update(['status' => 1]);
+            return back()->with('thongbao', 'Đã mở khóa người dùng thành công')->with('loaithongbao', 'success');
+        }
+        return back()->with('thongbao', 'Thao tác không hợp lệ')->with('loaithongbao', 'danger');
+    }
 }

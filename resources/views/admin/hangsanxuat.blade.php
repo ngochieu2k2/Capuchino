@@ -81,6 +81,59 @@
                                                             data-target="#xoaHangSanXuat">
                                                             <i class="fa fa-times"></i>
                                                         </button>
+                                                        <!-- Nút Sửa -->
+                                                        <button class="btn btn-warning btn-sm" data-toggle="modal"
+                                                            data-target="#suaHangSanXuat{{ $hangSanXuat->id_mfg }}">Sửa</button>
+
+                                                        <!-- Modal Sửa -->
+                                                        <div class="modal fade"
+                                                            id="suaHangSanXuat{{ $hangSanXuat->id_mfg }}" tabindex="-1"
+                                                            role="dialog" aria-hidden="true">
+                                                            <div class="modal-dialog" role="document">
+                                                                <div class="modal-content">
+                                                                    <form action="{{ route('xulyhangsanxuat') }}"
+                                                                        method="POST">
+                                                                        @csrf
+                                                                        <input type="hidden" name="thaoTac"
+                                                                            value="sửa hãng sản xuất">
+                                                                        <input type="hidden" name="maHangSua"
+                                                                            value="{{ $hangSanXuat->id_mfg }}">
+                                                                        <div class="modal-header">
+                                                                            <h4 class="modal-title">Sửa hãng sản xuất</h4>
+                                                                            <button type="button" class="close"
+                                                                                data-dismiss="modal">&times;</button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <div class="form-group">
+                                                                                <label>Tên hãng</label>
+                                                                                <input type="text" name="tenHang"
+                                                                                    class="form-control"
+                                                                                    value="{{ $hangSanXuat->name_mfg }}"
+                                                                                    required>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label>Loại hãng</label>
+                                                                                <select name="loaiHang" class="form-control"
+                                                                                    required>
+                                                                                    <option value="0"
+                                                                                        {{ $hangSanXuat->cat_mfg == 0 ? 'selected' : '' }}>
+                                                                                        điện thoại</option>
+                                                                                    <option value="1"
+                                                                                        {{ $hangSanXuat->cat_mfg == 1 ? 'selected' : '' }}>
+                                                                                        Phụ kiện</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-secondary"
+                                                                                data-dismiss="modal">Đóng</button>
+                                                                            <button type="submit"
+                                                                                class="btn btn-primary">Lưu</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </td>
                                             </tr>

@@ -10,7 +10,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('xulymagiamgia') }}" method="POST" enctype="multipart/form-data">
+            <form action="" method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
                     <p class="small" style="font-size:14px !important;">Nhập thông tin theo mẫu bên dưới</p>
                     <div class="row">
@@ -31,9 +31,11 @@
                             <div class="form-group form-group-default">
                                 <div class="form-check p-0 mt-1 mb-2">
                                     <label class="form-check-label">
-                                        <input class="form-check-input" name="hetHanCheck" id="hetHanCheck" type="checkbox">
+                                        <input class="form-check-input" name="hetHanCheck" id="hetHanCheck"
+                                            type="checkbox">
                                         <span class="form-check-sign"
-                                            style="color: #495057!important;padding-top:3px; font-size: 12px">Hết hạn</span>
+                                            style="color: #495057!important;padding-top:3px; font-size: 12px">Hết
+                                            hạn</span>
                                     </label>
                                 </div>
                             </div>
@@ -41,8 +43,8 @@
                         <div class="col-md-6 pr-2" id="divNgayBatDau">
                             <div class="form-group form-group-default">
                                 <label style="font-size:12px !important;">Ngày bắt đầu (*)</label>
-                                <input type="date" class="form-control" id="ngayBatDauSua" onblur="chinhNgay(this, 'ngayKetThucSua')"
-                                name="ngayBatDauSua">
+                                <input type="date" class="form-control" id="ngayBatDauSua"
+                                    onblur="chinhNgay(this, 'ngayKetThucSua')" name="ngayBatDauSua">
                                 @error('ngayBatDauSua')
                                     <span style="color: red;font-size:10px">{{ $message }}</span>
                                 @enderror
@@ -51,8 +53,7 @@
                         <div class="col-md-6 pl-2" id="divNgayKetThuc">
                             <div class="form-group form-group-default">
                                 <label style="font-size:12px !important;">Ngày kết thúc (*)</label>
-                                <input type="date" class="form-control" id="ngayKetThucSua"
-                                name="ngayKetThucSua">
+                                <input type="date" class="form-control" id="ngayKetThucSua" name="ngayKetThucSua">
                                 @error('ngayKetThucSua')
                                     <span style="color: red;font-size:10px">{{ $message }}</span>
                                 @enderror

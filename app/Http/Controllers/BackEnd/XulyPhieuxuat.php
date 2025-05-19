@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\BackEnd;
+
 use App\Http\Controllers\Controller;
 use App\Models\SanPham;
 use App\Models\ThuVienHinh;
@@ -266,7 +267,7 @@ class XulyPhieuxuat extends Controller
             $hinhThucThanhToan = $thongTinPhieuXuat->payments;
             $congNo = $thongTinPhieuXuat->debt;
             $congNoSua = $soTienDaThanhToan - $request->tongTien;
-            if(!empty($thongTinPhieuXuat->id_discount)){
+            if (!empty($thongTinPhieuXuat->id_discount)) {
                 $thongTinMaGiamGia = $this->maGiamGia->timMaGiamGiaTheoMa($thongTinPhieuXuat->id_discount); //tim ma giam gia
                 if (!empty($thongTinMaGiamGia)) {
                     $congNoSua += $thongTinMaGiamGia->reduced_price;

@@ -14,6 +14,9 @@ use App\Models\PhieuXuat;
 use App\Models\ChiTietPhieuXuat;
 use App\Models\MaGiamGia;
 use App\Models\LoiPhanHoi;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -32,8 +35,9 @@ class TaiKhoanController extends Controller
     private $chiTietPhieuXuat;
     private $maGiamGia;
     private $loiPhanHoi;
-    public function __construct()
-    {
+    public function __construct(
+        protected User $model // dependency injection(tiem model user vao de dung)
+    ) {
         $this->sanPham = new SanPham();
         $this->laptop = new Laptop();
         $this->phuKien = new PhuKien();
@@ -54,29 +58,29 @@ class TaiKhoanController extends Controller
             }
             return redirect()->route('taikhoan');
         }
-        $danhSachHangSanXuat = $this->hangSanXuat->layDanhSachHangSanXuat();
-        return view('user.dangnhap', compact(
-            'danhSachHangSanXuat'
-        ));
+
+        return view('user.dangnhap');
     }
     public function taikhoan()
     {
-        if (!Auth::check()) {
+        if (!auth()->check()) {
             return redirect()->route('dangnhap');
         }
-        $danhSachPhieuXuat = $this->phieuXuat->layDanhSachPhieuXuatTheoBoLoc([['id_users', '=', Auth::user()->id_users]]);
-        $danhSachSanPham = $this->sanPham->layDanhSachSanPham();
-        $danhSachMaGiamGia = $this->maGiamGia->layDanhSachMaGiamGia();
-        $danhSachThuVienHinh = $this->thuVienHinh->layDanhSachThuVienHinh();
-        $danhSachChiTietPhieuXuat = $this->chiTietPhieuXuat->layDanhSachChiTietPhieuXuat();
-        $danhSachHangSanXuat = $this->hangSanXuat->layDanhSachHangSanXuat();
+        $userId = auth()->user()->id_users;
+
+        // Lấy danh sách phiếu xuất của user hiện tại
+        $danhSachPhieuXuat = (new \App\Models\PhieuXuat)->layDanhSachPhieuXuatTheoBoLoc([['id_users', '=', $userId]]);
+        $danhSachChiTietPhieuXuat = (new \App\Models\ChiTietPhieuXuat)->layDanhSachChiTietPhieuXuat();
+        $danhSachSanPham = (new \App\Models\SanPham)->layDanhSachSanPham();
+        $danhSachMaGiamGia = (new \App\Models\MaGiamGia)->layDanhSachMaGiamGia();
+        $danhSachThuVienHinh = (new \App\Models\ThuVienHinh)->layDanhSachThuVienHinh();
+
         return view('user.taikhoan', compact(
             'danhSachPhieuXuat',
+            'danhSachChiTietPhieuXuat',
             'danhSachSanPham',
             'danhSachMaGiamGia',
-            'danhSachThuVienHinh',
-            'danhSachHangSanXuat',
-            'danhSachChiTietPhieuXuat'
+            'danhSachThuVienHinh'
         ));
     }
     public function dangxuat()
@@ -199,6 +203,11 @@ class TaiKhoanController extends Controller
                 'password' => $request->matKhau
             ];
             if (Auth::attempt($dataNguoiDung)) {
+                /** @var \App\Models\User|\Illuminate\Contracts\Auth\MustVerifyEmail $user */
+                $user = Auth::user();
+                if (! $user->hasVerifiedEmail()) {
+                    return redirect()->route('verification.notice');
+                }
                 if (Auth::user()->status == 0) { //neu tai khoan dang bi khoa
                     Auth::logout();
                     return back()->with('loidangnhap', 'Tài khoản hiện đang bị khóa.');
@@ -238,53 +247,22 @@ class TaiKhoanController extends Controller
                 'soDienThoai' => 'Số điện thoại',
                 'diaChi' => 'Địa chỉ'
             ];
-            $request->validate($rules, $messages, $attributes);
-            $thongTinNguoiDung = $this->nguoiDung->timNguoiDungTheoSoDienThoai($request->soDienThoai); //tim nguoi dung da ton tai hay chua
-            if (!empty($thongTinNguoiDung)) { //neu tim thay
-                if ($thongTinNguoiDung->status == 0) { //neu nguoi dung dang bi khoa
-                    return back()->with('loidangky', 'Số điện thoại hiện đang bị khóa.');
-                }
-                if (!empty($thongTinNguoiDung->email)) { //da co tai khoan nen khong the tao tai khoan moi
-                    return back()->with('loidangky', 'Số điện thoại đã tồn tại.');
-                } else { //chua co tai khoan thi tao tai khoan
-                    $dataNguoiDung = [
-                        $request->emailDangKy,
-                        bcrypt($request->matKhauDangKy)
-                    ];
-                    $this->nguoiDung->taoTaiKhoanNguoiDung($dataNguoiDung, $thongTinNguoiDung->id_users); //tao tai khoan cho nguoi dung
-                }
-                $dataNguoiDung = [
-                    $request->hoTen,
-                    $thongTinNguoiDung->phone,
-                    $request->diaChi,
-                    $thongTinNguoiDung->roles, //loainguoidung 0 là khách hàng, 1 là đối tác, 2 là nhân viên
-                    $thongTinNguoiDung->email,
-                    $thongTinNguoiDung->password
 
-                ];
-                $this->nguoiDung->suaNguoiDung($dataNguoiDung, $thongTinNguoiDung->id_users); //sua lai thong tin nguoi dung
-            } else {
-                $ngayTao = date("Y-m-d H:i:s");
-                $dataNguoiDung = [
-                    NULL, //manguoidung tu tang
-                    $request->hoTen,
-                    $request->soDienThoai,
-                    $request->diaChi,
-                    1, //trangthai 0 la bi khoa, 1 la dang hoat dong
-                    0, //loainguoidung 0 là khách hàng, 1 là đối tác, 2 là nhân viên
-                    $request->emailDangKy,
-                    bcrypt($request->matKhauDangKy),
-                    $ngayTao
-                ];
-                $this->nguoiDung->themNguoiDung($dataNguoiDung); //them nguoi dung vao database
-            }
-            $dataNguoiDung = [
+            $data = $request->validate($rules, $messages, $attributes);
+            // $user['updated_at'] = Carbon::now();
+            //pass request roi khong can check nua
+            $data = [
                 'email' => $request->emailDangKy,
-                'password' => $request->matKhauDangKy
+                'password' => Hash::make($request->matKhauDangKy),
+                'name_users' => $request->hoTen,
+                'phone' => $request->soDienThoai,
+                'address' => $request->diaChi
             ];
-            if (Auth::attempt($dataNguoiDung)) {
-                return redirect()->route('taikhoan');
-            }
+
+            $user = $this->model->create($data);
+            event(new Registered($user));
+            Auth::login($user);
+            return redirect()->route('verification.notice');
         }
         return redirect()->route('/')->with('thongbao', 'Thao tác thất bại vui lòng thử lại!');
     }

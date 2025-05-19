@@ -46,9 +46,9 @@
                                         @foreach (session('gioHang') as $ctgh)
                                             <tr>
                                                 <td class="li-product-remove">
-                                                    <button onclick="xoaSanPhamTrongSession({{ $ctgh['id_products'] }})" type="submit"
-                                                        class="btn btn-focus p-0 pr-1 pl-1" name="thaoTac" title="Xóa"
-                                                        value="xóa giỏ hàng" style='color:#555'><i
+                                                    <button onclick="xoaSanPhamTrongSession({{ $ctgh['id_products'] }})"
+                                                        type="submit" class="btn btn-focus p-0 pr-1 pl-1" name="thaoTac"
+                                                        title="Xóa" value="xóa giỏ hàng" style='color:#555'><i
                                                             class='fa fa-times'></i></button>
                                                 </td>
                                                 <td class="li-product-thumbnail hinh-giohang p-2"><a
@@ -66,14 +66,16 @@
                                                         <span
                                                             class="amount">{{ number_format($ctgh['promotional_price'], 0, ',') }}đ</span>
                                                         @php
-                                                            $thanhTienGioHang = $ctgh['soluongmua'] * $ctgh['promotional_price'];
+                                                            $thanhTienGioHang =
+                                                                $ctgh['soluongmua'] * $ctgh['promotional_price'];
                                                             $tongTienGioHang += $thanhTienGioHang;
                                                         @endphp
                                                     @else
                                                         <span
                                                             class="amount">{{ number_format($ctgh['sale_price'], 0, ',') }}đ</span>
                                                         @php
-                                                            $thanhTienGioHang = $ctgh['soluongmua'] * $ctgh['sale_price'];
+                                                            $thanhTienGioHang =
+                                                                $ctgh['soluongmua'] * $ctgh['sale_price'];
                                                             $tongTienGioHang += $thanhTienGioHang;
                                                         @endphp
                                                     @endif
@@ -100,28 +102,13 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="coupon-all">
-                                    @if (empty(session('maGiamGia')))
-                                        <div class="coupon">
-                                            <input id="coupon_code" class="input-text" name="maGiamGia"
-                                                pattern="[A-Za-z0-9]{3,50}" value="{{ old('maGiamGia') }}"
-                                                title="(Gồm các ký tự là chữ thường, in hoa hoặc số, không dấu và không khoảng cách, tối đa 50 ký tự)"
-                                                placeholder="Mã giảm giá" type="text">
-                                            <input class="button ml-1" name="thaoTac" value="áp dụng" type="submit">
-                                        </div>
-                                    @endif
                                     <div class="coupon2">
                                         <input class="button" name="thaoTac" value="cập nhật" type="submit">
                                     </div>
+
                                 </div>
                             </div>
                         </div>
-                        @error('maGiamGia')
-                            <div class="row">
-                                <div class="col-2">
-                                    <span style="color: red;font-size:10px">{{ $message }}</span>
-                                </div>
-                            </div>
-                        @enderror
                         <div class="row">
                             <div class="col-md-5 ml-auto">
                                 <div class="cart-page-total">
@@ -131,7 +118,9 @@
                                         @if (!empty(session('maGiamGia')))
                                             @php
                                                 $tongTienGioHang -= session('maGiamGia')->reduced_price;
-                                                if($tongTienGioHang<0) $tongTienGioHang = 0;
+                                                if ($tongTienGioHang < 0) {
+                                                    $tongTienGioHang = 0;
+                                                }
                                             @endphp
                                             <li>Giảm ({{ session('maGiamGia')->id_discount }}):
                                                 <span>-{{ number_format(session('maGiamGia')->reduced_price, 0, ',') }}đ</span>
