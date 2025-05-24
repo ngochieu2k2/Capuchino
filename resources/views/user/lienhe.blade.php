@@ -5,8 +5,8 @@
 @section('head')
     {{-- thêm css --}}
     <style>
-        #checkout-mess{
-            line-height:17px;
+        #checkout-mess {
+            line-height: 17px;
             padding: 20px;
         }
     </style>
@@ -80,23 +80,23 @@
                                     type="text" required
                                     {{ auth()->check() && auth()->user()->roles != 2 ? 'disabled' : '' }}>
                             </div>
+                            <div class="form-group">
+                                <label class="mb-0">Email <span class="required">*</span></label>
+                                @error('email')
+                                    <span style="color: red;font-size:10px">{{ $message }}</span>
+                                @enderror
+                                <input name="email" type="email"
+                                    value="{{ auth()->check() && auth()->user()->roles != 2 ? auth()->user()->email : old('email') }}"
+                                    title="Nhập đúng định dạng email, tối đa 255 ký tự" maxlength="255" required
+                                    {{ auth()->check() && auth()->user()->roles != 2 ? 'disabled' : '' }}>
+                            </div>
                             @if (auth()->check() && auth()->user()->roles != 2)
-                                <input
-                                    title="(Gồm các ký tự là chữ thường hoặc in hoa, có dấu hoặc không dấu, tối đa 50 ký tự)"
-                                    name="hoTen"
-                                    value="{{ auth()->check() && auth()->user()->roles != 2 ? auth()->user()->name_users : old('hoTen') }}"
-                                    pattern="[a-zỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđA-ZỲỌÁẦẢẤỜỄÀẠẰỆẾÝỘẬỐŨỨĨÕÚỮỊỖÌỀỂẨỚẶÒÙỒỢÃỤỦÍỸẮẪỰỈỎỪỶỞÓÉỬỴẲẸÈẼỔẴẺỠƠÔƯĂÊÂĐ ]{3,50}"
-                                    type="text" required hidden>
-                                <input
-                                    value="{{ auth()->check() && auth()->user()->roles != 2 ? auth()->user()->phone : old('soDienThoai') }}"
-                                    title="(Gồm các ký tự là số, có bắt đầu là số 0, tối đa 9 chữ số - không bao gồm ký tự đầu là 0)"
-                                    name="soDienThoai" pattern="^[0]\d{9}$" type="text" required hidden>
-                                <input
-                                    value="{{ auth()->check() && auth()->user()->roles != 2 ? auth()->user()->address : old('diaChi') }}"
-                                    title="(Gồm các ký tự là chữ thường, in hoa, số hoặc các ký tự như ,.-/ và tối đa 255 ký tự)"
-                                    name="diaChi"
-                                    pattern="[a-zỳọáầảấờễàạằệếýộậốũứĩõúữịỗìềểẩớặòùồợãụủíỹắẫựỉỏừỷởóéửỵẳẹèẽổẵẻỡơôưăêâđA-ZỲỌÁẦẢẤỜỄÀẠẰỆẾÝỘẬỐŨỨĨÕÚỮỊỖÌỀỂẨỚẶÒÙỒỢÃỤỦÍỸẮẪỰỈỎỪỶỞÓÉỬỴẲẸÈẼỔẴẺỠƠÔƯĂÊÂĐ0-9 -/,.]{3,255}"
-                                    type="text" required hidden>
+                                <input name="hoTen" value="{{ auth()->user()->name_users }}" type="text" required
+                                    hidden>
+                                <input name="soDienThoai" value="{{ auth()->user()->phone }}" type="text" required
+                                    hidden>
+                                <input name="diaChi" value="{{ auth()->user()->address }}" type="text" required hidden>
+                                <input name="email" value="{{ auth()->user()->email }}" type="email" required hidden>
                             @endif
                             <div class="form-group mb-20">
                                 <label class="mb-0">Lời nhắn <span class="required">*</span></label>

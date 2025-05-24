@@ -14,7 +14,7 @@ class LoiPhanHoi extends Model
     {
         $danhSachLoiPhanHoi = DB::table($this->table);
         $danhSachLoiPhanHoi = $danhSachLoiPhanHoi->select(DB::raw($this->table . '.* , users.name_users,users.phone,users.address'))
-        ->leftJoin('users', $this->table . '.id_users', '=', 'users.id_users');
+            ->leftJoin('users', $this->table . '.id_users', '=', 'users.id_users');
         if (!empty($boLoc)) {
             foreach ($boLoc as $bl) {
                 if (count($bl) == 2) {
@@ -29,33 +29,37 @@ class LoiPhanHoi extends Model
         $danhSachLoiPhanHoi = $danhSachLoiPhanHoi->get()->all();
         return $danhSachLoiPhanHoi;
     }
-    public function timLoiPhanHoiTheoMa($maloiphanhoi){
-        $loiPhanHoi = DB::select('SELECT * FROM feedback WHERE id_feedback = ?',[$maloiphanhoi]);
-        if(!empty($loiPhanHoi)){
+    public function timLoiPhanHoiTheoMa($maloiphanhoi)
+    {
+        $loiPhanHoi = DB::select('SELECT * FROM feedback WHERE id_feedback = ?', [$maloiphanhoi]);
+        if (!empty($loiPhanHoi)) {
             return $loiPhanHoi[0];
         }
         return $loiPhanHoi;
     }
-    public function doiTrangThaiLoiPhanHoi($data,$maloiphanhoi){
-        $data = array_merge($data,[$maloiphanhoi]);
+    public function doiTrangThaiLoiPhanHoi($data, $maloiphanhoi)
+    {
+        $data = array_merge($data, [$maloiphanhoi]);
         return DB::select('UPDATE feedback SET
             status = ?
-            WHERE id_feedback = ?',$data);
+            WHERE id_feedback = ?', $data);
     }
-    public function doiTrangThaiLoiPhanHoiTatCa(){
+    public function doiTrangThaiLoiPhanHoiTatCa()
+    {
         return DB::select('UPDATE feedback SET
             status = 1
             WHERE status = 0');
     }
-    public function themLoiPhanHoi($data){
+    public function themLoiPhanHoi($data)
+    {
         return DB::insert('INSERT INTO feedback (
             content,
             status,
             id_users,
-            date_created) values (
-            ?,
-            ?,
-            ?,
-            ?)', $data);
+            date_created,
+            email
+        ) VALUES (
+            ?, ?, ?, ?, ?
+        )', $data);
     }
 }

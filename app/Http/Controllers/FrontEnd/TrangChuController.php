@@ -127,11 +127,12 @@ class TrangChuController extends Controller
     public function xulylienhe(Request $request)
     {
         $request->validate(['thaoTac' => 'required|string']);
-        if ($request->thaoTac == "gửi lời nhắn") { // *******************************************************************************************gui loi nhan
+        if ($request->thaoTac == "gửi lời nhắn") {
             $rules = [
                 'hoTen' => 'required|string|max:50|min:3',
                 'soDienThoai' => 'required|numeric|digits:10',
                 'diaChi' => 'required|string|max:255|min:3',
+                'email' => 'required|email|max:255',
                 'noiDung' => 'required|string|max:255|min:3'
             ];
             $messages = [
@@ -140,52 +141,56 @@ class TrangChuController extends Controller
                 'numeric' => ':attribute đã nhập sai',
                 'min' => ':attribute tối thiểu :min ký tự',
                 'max' => ':attribute tối đa :max ký tự',
-                'digits' => ':attribute không đúng :digits ký tự'
+                'digits' => ':attribute không đúng :digits ký tự',
+                'email' => ':attribute không đúng định dạng'
             ];
             $attributes = [
                 'hoTen' => 'Họ tên',
                 'soDienThoai' => 'Số điện thoại',
                 'diaChi' => 'Địa chỉ',
+                'email' => 'Email',
                 'noiDung' => 'Nội dung'
             ];
             $request->validate($rules, $messages, $attributes);
             $ngayTao = date("Y-m-d H:i:s");
-            $thongTinNguoiDung = $this->nguoiDung->timNguoiDungTheoSoDienThoai($request->soDienThoai); //tim nguoi dung da ton tai hay chua
-            if (!empty($thongTinNguoiDung)) { //neu tim thay
-                if ($thongTinNguoiDung->status == 0) { //neu nguoi dung dang bi khoa
+
+            $thongTinNguoiDung = $this->nguoiDung->timNguoiDungTheoSoDienThoai($request->soDienThoai);
+            if (!empty($thongTinNguoiDung)) {
+                if ($thongTinNguoiDung->status == 0) {
                     return back()->with('thongbao', 'Thông tin người dùng hiện đang bị tạm khóa do hủy quá nhiều đơn!');
                 }
                 $dataNguoiDung = [
                     $request->hoTen,
                     $thongTinNguoiDung->phone,
                     $request->diaChi,
-                    $thongTinNguoiDung->roles, //loainguoidung 0 là khách hàng, 1 là đối tác, 2 là nhân viên
-                    $thongTinNguoiDung->email,
+                    $thongTinNguoiDung->roles,
+                    $request->email,
                     $thongTinNguoiDung->password
                 ];
-                $this->nguoiDung->suaNguoiDung($dataNguoiDung, $thongTinNguoiDung->id_users); //sua lai thong tin nguoi dung
+                $this->nguoiDung->suaNguoiDung($dataNguoiDung, $thongTinNguoiDung->id_users);
             } else {
                 $dataNguoiDung = [
-                    NULL, //manguoidung tu tang
+                    NULL,
                     $request->hoTen,
                     $request->soDienThoai,
                     $request->diaChi,
-                    1, //trangthai 0 la bi khoa, 1 la dang hoat dong
-                    0, //loainguoidung 0 là khách hàng, 1 là đối tác, 2 là nhân viên
-                    NULL, //email
-                    NULL, //matkhau
+                    1,
+                    0,
+                    $request->email,
+                    NULL,
                     $ngayTao
                 ];
-                $this->nguoiDung->themNguoiDung($dataNguoiDung); //them nguoi dung vao database
-                $thongTinNguoiDung = $this->nguoiDung->timNguoiDungTheoNgayTao($ngayTao); //tim nguoi dung vua them
+                $this->nguoiDung->themNguoiDung($dataNguoiDung);
+                $thongTinNguoiDung = $this->nguoiDung->timNguoiDungTheoNgayTao($ngayTao);
             }
             $dataLoiPhanHoi = [
-                $request->noiDung, //noidung,
-                0, //trangthai, 0 la chua doc // 1 la da doc
-                $thongTinNguoiDung->id_users, //manguoidung,
-                $ngayTao //ngaytao
+                $request->noiDung,
+                0,
+                $thongTinNguoiDung->id_users,
+                $ngayTao,
+                $request->email // thêm email vào feedback nếu cần
             ];
-            $this->loiPhanHoi->themLoiPhanHoi($dataLoiPhanHoi); //them loi phan hoi vao database
+            $this->loiPhanHoi->themLoiPhanHoi($dataLoiPhanHoi);
             return redirect()->route('/')->with('thongbao', 'Gửi lời nhắn thành công, sẽ có nhân viên liên hệ bạn sớm nhất có thể!');
         }
         return redirect()->route('/')->with('thongbao', 'Thao tác thất bại vui lòng thử lại!');
